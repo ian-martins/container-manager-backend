@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.Command_Run;
 import com.example.demo.model.Object_Container;
-import com.example.demo.model.RemoveResponse;
+import com.example.demo.model.dto.GenericResponse;
 import com.example.demo.service.CommandService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,24 +26,27 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin(origins = "http://localhost:5173/")
 @RequiredArgsConstructor
 public class HomeController {
+
     private final CommandService commandService;
 
     @GetMapping("/container")
     public ResponseEntity<?> containers() {
         Optional<List<Object_Container>> containers = commandService.containers(true);
-        if (containers.isEmpty())
+        if (containers.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(containers);
-        else
+        } else {
             return ResponseEntity.ok().body(containers);
+        }
     }
-    
+
     @GetMapping("/container/{id}")
     public ResponseEntity<?> container(@PathVariable("id") String id) {
         Optional<Object_Container> container = commandService.container(id, id);
-        if (container.isEmpty())
+        if (container.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Container Não Encontrado");
-        else
+        } else {
             return ResponseEntity.ok().body(container);
+        }
     }
 
     @PostMapping("/container/run")
@@ -54,26 +57,70 @@ public class HomeController {
 
     @GetMapping("/stop/{id}")
     public ResponseEntity<?> stop(@PathVariable("id") String id) {
-        if (commandService.stop(id)) ResponseEntity.ok().body(commandService.container(id, id).get());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Falha ao parar Container " + id);
+        try {
+            if (commandService.container(id, "").isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new GenericResponse(id, false, null, "Container " + id + " Não Encontrado"));
+            }
+            commandService.stop(id);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new GenericResponse(id, true, null, "Container " + id + " Parado"));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GenericResponse(null, false, e.getMessage(), "Falha interna do Servidor"));
+
+        }
     }
-    
+
+    /**
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/start/{id}")
     public ResponseEntity<?> start(@PathVariable("id") String id) {
-        if(!commandService.container(id, "").isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Container " +  id + " Não Encontrado");
-        if(commandService.start(id)) return ResponseEntity.status(HttpStatus.ACCEPTED).body("Container " + id + " Reiniciado");
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Falha ao parar Container " + id);
+        try {
+            if (!commandService.container(id, "").isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new GenericResponse(id, false, null, "Container " + id + " Não Encontrado"));
+            }
+            commandService.start(id);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new GenericResponse(id, true, null, "Container " + id + " Reiniciado"));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GenericResponse(null, false, e.getMessage(), "Falha interna do Servidor"));
+        }
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("/remove/{id}")
-    public ResponseEntity<?> remove(@PathVariable("id") String id){
-        if(commandService.container(id)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new RemoveResponse(id, false, "Impossivel Deletar Container " + id + ", esta Rodando!")); 
+    public ResponseEntity<?> remove(@PathVariable("id") String id) {
+        try {
+            if (commandService.container(id)) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new GenericResponse(id, false, null, "Impossivel Deletar Container " + id + ", esta Rodando!"));
+            }
+            commandService.remove(id);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new GenericResponse(id, true, null, "Container " + id + " Deletado"));
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GenericResponse(null, false, e.getMessage(), "Falha interna do Servidor"));
         }
-        if(commandService.remove(id)) return ResponseEntity.status(HttpStatus.OK).body(new RemoveResponse(id, true, "Container " + id + " Deletado"));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }
-
-
-

@@ -20,17 +20,16 @@ import lombok.NoArgsConstructor;
 @Service
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommandService extends DockerComands{
+public class CommandService extends DockerComands {
+
     public String WSL = "wsl";
     public String HOST = "tcp://10.211.0.31:2375";
 
     private BufferedReader make(List<String> dockerCommand) throws IOException {
-        System.out.println(dockerCommand.toString());
         ProcessBuilder pb = new ProcessBuilder(dockerCommand);
 
         //Variáveis de ambiente
         //pb.environment().put("DOCKER_HOST", HOST);
-
         // Junta stderr com stdout (opcional)
         pb.redirectErrorStream(true);
 
@@ -38,7 +37,7 @@ public class CommandService extends DockerComands{
         return new BufferedReader(
                 new InputStreamReader(process.getInputStream()));
     }
-    
+
     public boolean container(String ID) {
         try {
             String line;
@@ -46,7 +45,6 @@ public class CommandService extends DockerComands{
 
             while ((line = reader.readLine()) != null) {
                 if (line.equals(ID)) {
-                    System.err.println("Container " + ID + " esta rodando");
                     return true;
                 }
             }
@@ -55,9 +53,6 @@ public class CommandService extends DockerComands{
         }
         return false;
     }
-
-
-
 
     /**
      * Retorna um objeto Object_Container com o ID informado, podendo retornar
@@ -99,22 +94,26 @@ public class CommandService extends DockerComands{
             command.add(PS);
             command.add(FORMAT);
             command.add(FORMATO_CONTAINER_1);
-            
-            if(all)  command.add(ALL);
-            
-            BufferedReader reader = make(command);
 
-            while ((line = reader.readLine()) != null) {
-                    String[] lines = line.split(";");
-                    System.out.println(lines[0]);
-                    cs.add(new Object_Container(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5]));
+            if (all) {
+                command.add(ALL);
             }
+
+            BufferedReader reader = make(command);
+            int i = 0;
+            while ((line = reader.readLine()) != null) {
+                i++;
+                String[] lines = line.split(";");
+                cs.add(new Object_Container(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5]));
+            }
+            System.out.println(i + " containers carregados");
+
             return Optional.ofNullable(cs);
         } catch (IOException e) {
             return Optional.empty();
         }
     }
-    
+
     /**
      * Retorna um objeto Object_Image com o ID informado, podendo retornar um
      * objeto Object_Image vazio
@@ -205,7 +204,6 @@ public class CommandService extends DockerComands{
             command.add(c.getSignal());
         }
 
-
         // Valores em lista
         for (String env : c.getEnvironments()) {
             command.add(ENVIRONMENT);
@@ -219,9 +217,8 @@ public class CommandService extends DockerComands{
         try {
             String line;
             BufferedReader reader = make(command);
-             while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 //String[] lines = line.split(";");
-                System.out.println(line);
             }
         } catch (IOException ex) {
         }
@@ -235,11 +232,16 @@ public class CommandService extends DockerComands{
         command.add(STOP);
         command.add(id);
         try {
-            make(command);
+            String line;
+            BufferedReader reader = make(command);
+            System.out.println("Comando " + command + " Executado!");
+            while ((line = reader.readLine()) != null) {
+                System.out.println("ID do Container: " + line);
+            }
             return true;
         } catch (IOException ex) {
+            return false;
         }
-        return false;
     }
 
     public boolean remove(String id) {
@@ -249,13 +251,19 @@ public class CommandService extends DockerComands{
         command.add(RM);
         command.add(id);
         try {
-            make(command);
+            String line;
+            BufferedReader reader = make(command);
+            System.out.println("Comando " + command + " Executado!");
+
+            while ((line = reader.readLine()) != null) {
+                System.out.println("ID do Container: " + line);
+            }
             return true;
         } catch (IOException ex) {
+            return false;
         }
-        return false;
     }
-    
+
     public boolean start(String id) {
         List<String> command = new ArrayList<>();
         command.add(WSL);
@@ -263,16 +271,17 @@ public class CommandService extends DockerComands{
         command.add(START);
         command.add(id);
         try {
-            make(command);
+            String line;
+            BufferedReader reader = make(command);
+            System.out.println("Comando " + command + " Executado!");
+
+            while ((line = reader.readLine()) != null) {
+                System.out.println("ID do Container: " + line);
+            }
             return true;
         } catch (IOException ex) {
+            return false;
         }
-        return false;
     }
 
 }
-
-
-
-
-
