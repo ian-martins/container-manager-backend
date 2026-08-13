@@ -10,9 +10,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.constants.DockerComands;
-import com.example.demo.model.Command_Run;
 import com.example.demo.model.Object_Container;
 import com.example.demo.model.Object_Image;
+import com.example.demo.model.commands.Command_Run;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -215,11 +215,7 @@ public class CommandService extends DockerComands {
         }
         command.add(c.getImage());
         try {
-            String line;
-            BufferedReader reader = make(command);
-            while ((line = reader.readLine()) != null) {
-                //String[] lines = line.split(";");
-            }
+            make(command);
         } catch (IOException ex) {
         }
 

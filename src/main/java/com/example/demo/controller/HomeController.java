@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Command_Run;
 import com.example.demo.model.Object_Container;
+import com.example.demo.model.commands.Command_Run;
 import com.example.demo.model.dto.GenericResponse;
 import com.example.demo.service.CommandService;
 
