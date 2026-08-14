@@ -34,7 +34,7 @@ public class AuthController {
     public ResponseEntity<?> login(
             @RequestBody LoginRequest request
     ) {
-
+        System.out.println("tentativa de login");
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -47,7 +47,7 @@ public class AuthController {
                 (UserDetails) authentication.getPrincipal();
 
         String token = jwtService.generateToken(userDetails);
-
+        System.out.println("token: " +  token );
         return ResponseEntity.ok(token);
     }
 }
