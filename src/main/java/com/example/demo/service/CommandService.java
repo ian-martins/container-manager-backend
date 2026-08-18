@@ -41,7 +41,7 @@ public class CommandService extends DockerComands {
     public boolean container(String ID) {
         try {
             String line;
-            BufferedReader reader = make(List.of(WSL, DOCKER, PS, QUIET));
+            BufferedReader reader = make(List.of(DOCKER, PS, QUIET));
 
             while ((line = reader.readLine()) != null) {
                 if (line.equals(ID)) {
@@ -65,7 +65,7 @@ public class CommandService extends DockerComands {
     public Optional<Object_Container> container(String ID, String Name) {
         try {
             String line;
-            BufferedReader reader = make(List.of(WSL, DOCKER, PS, FORMAT, FORMATO_CONTAINER_1));
+            BufferedReader reader = make(List.of(DOCKER, PS, FORMAT, FORMATO_CONTAINER_1));
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
                 if (lines[0].equals(ID) || lines[2].equals(Name)) {
@@ -89,7 +89,6 @@ public class CommandService extends DockerComands {
             List<String> command = new ArrayList<>();
             String line;
 
-            command.add(WSL);
             command.add(DOCKER);
             command.add(PS);
             command.add(FORMAT);
@@ -124,7 +123,7 @@ public class CommandService extends DockerComands {
     public Optional<Object_Image> image(String ID) {
         try {
             String line;
-            BufferedReader reader = make(List.of(WSL, DOCKER, IMAGES, FORMAT, FORMATO_IMAGE_1));
+            BufferedReader reader = make(List.of(DOCKER, IMAGES, FORMAT, FORMATO_IMAGE_1));
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
                 if (lines[4].equals(ID)) {
@@ -146,7 +145,7 @@ public class CommandService extends DockerComands {
         try {
             List<Object_Image> images = new ArrayList<>();
             String line;
-            BufferedReader reader = make(List.of(WSL, DOCKER, IMAGES, FORMAT, FORMATO_IMAGE_1));
+            BufferedReader reader = make(List.of(DOCKER, IMAGES, FORMAT, FORMATO_IMAGE_1));
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
                 images.add(new Object_Image(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6], lines[7], lines[8], lines[9]));
@@ -164,7 +163,6 @@ public class CommandService extends DockerComands {
      */
     public void run(Command_Run c) {
         List<String> command = new ArrayList<>();
-        command.add(WSL);
         command.add(DOCKER);
         command.add(RUN);
 
@@ -223,7 +221,6 @@ public class CommandService extends DockerComands {
 
     public boolean stop(String id) {
         List<String> command = new ArrayList<>();
-        command.add(WSL);
         command.add(DOCKER);
         command.add(STOP);
         command.add(id);
@@ -242,7 +239,6 @@ public class CommandService extends DockerComands {
 
     public boolean remove(String id) {
         List<String> command = new ArrayList<>();
-        command.add(WSL);
         command.add(DOCKER);
         command.add(RM);
         command.add(id);
@@ -262,7 +258,6 @@ public class CommandService extends DockerComands {
 
     public boolean start(String id) {
         List<String> command = new ArrayList<>();
-        command.add(WSL);
         command.add(DOCKER);
         command.add(START);
         command.add(id);

@@ -1,0 +1,7 @@
+{
+    "id": 1,
+    "name": "Docker WSL",
+    "host": "localhost",
+    "port": 2375,
+    "tls" : false
+}
