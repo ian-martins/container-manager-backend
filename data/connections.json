@@ -1,7 +1,1 @@
-{
-    "id": 1,
-    "name": "Docker WSL",
-    "host": "localhost",
-    "port": 2375,
-    "tls" : false
-}
+[{"id":"88753399-c6b7-4fc6-a0a5-4a5e245f6a22","name":"Host Oracle","host":"172.22.151.63","port":2375},{"id":"9eb497a6-dc76-456a-86ee-4144d785d444","name":"Host Oracle","host":"172.22.151.00","port":2375},{"id":"5b28a1cf-bdd3-4671-b6c3-00f5b95cdb03","name":"Local Host","host":"localhost","port":2375}]

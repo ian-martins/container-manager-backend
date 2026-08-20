@@ -34,7 +34,17 @@ public class ConnectionService {
         return repository.save(connection);
     }
 
+    public DockerHost update(DockerHost connection){
+        return repository.update(connection);
+    }
+
     public void delete(UUID id) {
         repository.deleteById(id);
     }
+
+    public void deleteAll() {
+        repository.deleteAll();
+    }
+
+    
 }
