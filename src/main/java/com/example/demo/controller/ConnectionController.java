@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.config.DockerHost;
-import com.example.demo.model.Usuario;
 import com.example.demo.service.ConnectionService;
 
 import lombok.RequiredArgsConstructor;
@@ -98,11 +96,4 @@ public class ConnectionController {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Conexão não atualizada");
     }
 
-    @PostMapping("/{id}/activate")
-    public ResponseEntity<?> activate(@PathVariable UUID id, Authentication authentication) {
-        Usuario usuario = (Usuario) authentication.getPrincipal();
-
-        connectionService.activate(id, usuario);
-        return ResponseEntity.ok().build();
-    }
 }

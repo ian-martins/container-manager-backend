@@ -21,6 +21,7 @@ import com.example.demo.model.Usuario;
 import com.example.demo.model.commands.Command_Run;
 import com.example.demo.model.dto.GenericResponse;
 import com.example.demo.service.CommandService;
+import com.example.demo.service.ConnectionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,11 +32,12 @@ import lombok.RequiredArgsConstructor;
 public class HomeController {
 
     private final CommandService commandService;
+    private final ConnectionService connectionService;
 
     @GetMapping("/container")
     public ResponseEntity<?> containers(Authentication authentication) {
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        DockerHost dockerHost = usuario.getDockerHost();
+        DockerHost dockerHost = connectionService.findById(usuario.getDockerHost()).get();
 
         Optional<List<Object_Container>> containers = commandService.containers(true, dockerHost);
         if (containers.isEmpty()) {
@@ -48,7 +50,8 @@ public class HomeController {
     @GetMapping("/container/{id}")
     public ResponseEntity<?> container(@PathVariable("id") String id, Authentication authentication) {
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        DockerHost dockerHost = usuario.getDockerHost();
+        DockerHost dockerHost = connectionService.findById(usuario.getDockerHost()).get();
+
         Optional<Object_Container> container = commandService.container(id, id, dockerHost);
         if (container.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Container Não Encontrado");
@@ -60,7 +63,8 @@ public class HomeController {
     @PostMapping("/container/run")
     public ResponseEntity<?> run(@RequestBody Command_Run command_Run, Authentication authentication) {
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        DockerHost dockerHost = usuario.getDockerHost();
+        DockerHost dockerHost = connectionService.findById(usuario.getDockerHost()).get();
+
         commandService.run(command_Run, dockerHost);
         return ResponseEntity.ok().body("criado");
     }
@@ -68,7 +72,8 @@ public class HomeController {
     @GetMapping("/stop/{id}")
     public ResponseEntity<?> stop(@PathVariable("id") String id, Authentication authentication) {
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        DockerHost dockerHost = usuario.getDockerHost();
+        DockerHost dockerHost = connectionService.findById(usuario.getDockerHost()).get();
+
         try {
             if (commandService.container(id, "", dockerHost).isEmpty()) {
                 return ResponseEntity
@@ -95,7 +100,8 @@ public class HomeController {
     @GetMapping("/start/{id}")
     public ResponseEntity<?> start(@PathVariable("id") String id, Authentication authentication) {
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        DockerHost dockerHost = usuario.getDockerHost();
+        DockerHost dockerHost = connectionService.findById(usuario.getDockerHost()).get();
+
         try {
             if (!commandService.container(id, "", dockerHost).isEmpty()) {
                 return ResponseEntity
@@ -121,7 +127,8 @@ public class HomeController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> remove(@PathVariable("id") String id, Authentication authentication) {
         Usuario usuario = (Usuario) authentication.getPrincipal();
-        DockerHost dockerHost = usuario.getDockerHost();
+        DockerHost dockerHost = connectionService.findById(usuario.getDockerHost()).get();
+
         try {
             if (commandService.container(id, dockerHost)) {
                 return ResponseEntity

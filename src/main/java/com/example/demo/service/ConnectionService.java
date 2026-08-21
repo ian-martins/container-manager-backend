@@ -15,11 +15,9 @@ import com.example.demo.repository.DockerHostRepository;
 public class ConnectionService {
 
     private final DockerHostRepository repository;
-    private final ActiveConnection activeConnection;
 
-    public ConnectionService(DockerHostRepository repository, ActiveConnection activeConnection) {
+    public ConnectionService(DockerHostRepository repository) {
         this.repository = repository;
-        this.activeConnection = activeConnection;
     }
 
     public List<DockerHost> findAll() {
@@ -56,10 +54,7 @@ public class ConnectionService {
         if (connection == null) {
             throw new RuntimeException("Conexão não encontrada");
         }
-        usuario.setDockerHost(connection);
+        usuario.setDockerHost(connection.getId());
     }
     
-    public DockerHost getActiveConnection() {
-        return activeConnection.getConnection();
-    }
 }
