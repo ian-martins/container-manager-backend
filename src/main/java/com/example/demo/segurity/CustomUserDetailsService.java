@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.config.SecurityConstants;
+import com.example.demo.config.UserConstants;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -15,14 +15,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        if (!SecurityConstants.USERNAME.equals(username)) {
+        if (!UserConstants.USERNAME.equals(username)) {
             throw new UsernameNotFoundException("Usuário não encontrado");
         }
 
         return User.builder()
-                .username(SecurityConstants.USERNAME)
-                .password(SecurityConstants.PASSWORD)
-                .roles(SecurityConstants.ROLE)
+                .username(UserConstants.USERNAME)
+                .password(UserConstants.PASSWORD)
+                .roles(UserConstants.ROLE)
                 .build();
     }
 }

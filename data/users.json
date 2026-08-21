@@ -1,0 +1,9 @@
+[
+    {
+        "id": 1,
+        "username": "admin",
+        "password": "$2a$10$H8nm061mlLeBJsQtrAkWdeOgG6.BxysHWUJ3gQAPI4LSQs7yAoT5.",
+        "dockerHostId": null,
+        "role": "ADMIN"
+    }
+]

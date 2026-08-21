@@ -24,12 +24,10 @@ public class CommandService extends DockerComands {
         this.connectionService = connectionService;
     }
 
-    private BufferedReader make(List<String> dockerCommand) throws IOException {
-        DockerHost dockerHost = getRequiredConnection();
-
+    private BufferedReader make(List<String> dockerCommand, DockerHost dockerHost) throws IOException {
         List<String> command = new ArrayList<>();
 
-        if(!dockerHost.isWslLocal()) {
+        if (!dockerHost.isWslLocal()) {
             command.add("WSL");
         }
         command.addAll(dockerCommand);
@@ -37,7 +35,6 @@ public class CommandService extends DockerComands {
         String HOST = "tcp://" + dockerHost.getHost() + ":" + dockerHost.getPort();
         ProcessBuilder pb = new ProcessBuilder(command);
         //$env:DOCKER_HOST="tcp://10.211.0.31:2375"   tcp://10.211.0.31:2375
-
 
         //Variáveis de ambiente
         pb.environment().put("DOCKER_HOST", HOST);
@@ -58,10 +55,10 @@ public class CommandService extends DockerComands {
         return dockerHost;
     }
 
-    public boolean container(String ID) {
+    public boolean container(String ID, DockerHost dockerHost) {
         try {
 
-            BufferedReader reader = make(List.of(DOCKER, PS, QUIET));
+            BufferedReader reader = make(List.of(DOCKER, PS, QUIET), dockerHost);
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -83,7 +80,7 @@ public class CommandService extends DockerComands {
      * @param Name
      * @return Object_Container
      */
-    public Optional<Object_Container> container(String ID, String Name) {
+    public Optional<Object_Container> container(String ID, String Name, DockerHost dockerHost) {
         try {
             List<String> command = new ArrayList<>();
             command.add(DOCKER);
@@ -94,7 +91,7 @@ public class CommandService extends DockerComands {
             } else {
                 command.add(FORMATO_CONTAINER_1);
             }
-            BufferedReader reader = make(command);
+            BufferedReader reader = make(command, dockerHost);
 
             String line;
             while ((line = reader.readLine()) != null) {
@@ -114,7 +111,7 @@ public class CommandService extends DockerComands {
      *
      * @return Optional List Object_Container
      */
-    public Optional<List<Object_Container>> containers(boolean all) {
+    public Optional<List<Object_Container>> containers(boolean all, DockerHost dockerHost) {
         try {
             List<Object_Container> cs = new ArrayList<>();
             List<String> command = new ArrayList<>();
@@ -122,7 +119,7 @@ public class CommandService extends DockerComands {
             command.add(DOCKER);
             command.add(PS);
             command.add(FORMAT);
-            if (getRequiredConnection().isWslLocal()) {
+            if (dockerHost.isWslLocal()) {
                 command.add(FORMATO_CONTAINER_2);
             } else {
                 command.add(FORMATO_CONTAINER_1);
@@ -132,7 +129,7 @@ public class CommandService extends DockerComands {
                 command.add(ALL);
             }
 
-            BufferedReader reader = make(command);
+            BufferedReader reader = make(command, dockerHost);
             int i = 0;
             String line;
             while ((line = reader.readLine()) != null) {
@@ -155,10 +152,21 @@ public class CommandService extends DockerComands {
      * @param ID
      * @return
      */
-    public Optional<Object_Image> image(String ID) {
+    public Optional<Object_Image> image(String ID, DockerHost dockerHost) {
         try {
+            List<String> command = new ArrayList<>();
+
+            command.add(DOCKER);
+            command.add(IMAGES);
+            command.add(FORMAT);
+            if (dockerHost.isWslLocal()) {
+                command.add(FORMATO_IMAGE_2);
+            } else {
+                command.add(FORMATO_IMAGE_1);
+            }
+            BufferedReader reader = make(command, dockerHost);
+
             String line;
-            BufferedReader reader = make(List.of(DOCKER, IMAGES, FORMAT, FORMATO_IMAGE_1));
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
                 if (lines[4].equals(ID)) {
@@ -176,11 +184,21 @@ public class CommandService extends DockerComands {
      *
      * @return List Object_Image
      */
-    public Optional<List<Object_Image>> images() {
+    public Optional<List<Object_Image>> images(DockerHost dockerHost) {
         try {
             List<Object_Image> images = new ArrayList<>();
+            List<String> command = new ArrayList<>();
+
+            command.add(DOCKER);
+            command.add(IMAGES);
+            command.add(FORMAT);
+            if (dockerHost.isWslLocal()) {
+                command.add(FORMATO_IMAGE_2);
+            } else {
+                command.add(FORMATO_IMAGE_1);
+            }
             String line;
-            BufferedReader reader = make(List.of(DOCKER, IMAGES, FORMAT, FORMATO_IMAGE_1));
+            BufferedReader reader = make(command, dockerHost);
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
                 images.add(new Object_Image(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6], lines[7], lines[8], lines[9]));
@@ -196,7 +214,7 @@ public class CommandService extends DockerComands {
      *
      * @param c Command_Run
      */
-    public void run(Command_Run c) {
+    public void run(Command_Run c, DockerHost dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(RUN);
@@ -248,20 +266,20 @@ public class CommandService extends DockerComands {
         }
         command.add(c.getImage());
         try {
-            make(command);
+            make(command, dockerHost);
         } catch (IOException ex) {
         }
 
     }
 
-    public boolean stop(String id) {
+    public boolean stop(String id, DockerHost dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(STOP);
         command.add(id);
         try {
             String line;
-            BufferedReader reader = make(command);
+            BufferedReader reader = make(command, dockerHost);
             System.out.println("Comando " + command + " Executado!");
             while ((line = reader.readLine()) != null) {
                 System.out.println("ID do Container: " + line);
@@ -272,14 +290,14 @@ public class CommandService extends DockerComands {
         }
     }
 
-    public boolean remove(String id) {
+    public boolean remove(String id, DockerHost dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(RM);
         command.add(id);
         try {
             String line;
-            BufferedReader reader = make(command);
+            BufferedReader reader = make(command, dockerHost);
             System.out.println("Comando " + command + " Executado!");
 
             while ((line = reader.readLine()) != null) {
@@ -291,14 +309,14 @@ public class CommandService extends DockerComands {
         }
     }
 
-    public boolean start(String id) {
+    public boolean start(String id, DockerHost dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(START);
         command.add(id);
         try {
             String line;
-            BufferedReader reader = make(command);
+            BufferedReader reader = make(command, dockerHost);
             System.out.println("Comando " + command + " Executado!");
 
             while ((line = reader.readLine()) != null) {

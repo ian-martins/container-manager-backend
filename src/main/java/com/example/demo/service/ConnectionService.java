@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.config.ActiveConnection;
 import com.example.demo.config.DockerHost;
+import com.example.demo.model.Usuario;
 import com.example.demo.repository.DockerHostRepository;
 
 @Service
@@ -49,15 +50,13 @@ public class ConnectionService {
         repository.deleteAll();
     }
 
-    public void activate(UUID id) {
+    public void activate(UUID id, Usuario usuario) {
         DockerHost connection = findById(id).get();
-
         
-
         if (connection == null) {
             throw new RuntimeException("Conexão não encontrada");
         }
-        activeConnection.setConnection(connection);
+        usuario.setDockerHost(connection);
     }
     
     public DockerHost getActiveConnection() {
