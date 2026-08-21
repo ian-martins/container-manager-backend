@@ -17,5 +17,6 @@ public class DockerHost {
     private String name;
     private String host;
     private int port;
+    private boolean wslLocal;
 
 }

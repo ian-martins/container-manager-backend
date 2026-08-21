@@ -9,40 +9,61 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.config.DockerHost;
 import com.example.demo.constants.DockerComands;
 import com.example.demo.model.Object_Container;
 import com.example.demo.model.Object_Image;
 import com.example.demo.model.commands.Command_Run;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 public class CommandService extends DockerComands {
 
-    public String WSL = "wsl";
-    public String HOST = "tcp://10.211.0.31:2375";
+    private final ConnectionService connectionService;
+
+    public CommandService(ConnectionService connectionService) {
+        this.connectionService = connectionService;
+    }
 
     private BufferedReader make(List<String> dockerCommand) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(dockerCommand);
+        DockerHost dockerHost = getRequiredConnection();
+
+        List<String> command = new ArrayList<>();
+
+        if(!dockerHost.isWslLocal()) {
+            command.add("WSL");
+        }
+        command.addAll(dockerCommand);
+
+        String HOST = "tcp://" + dockerHost.getHost() + ":" + dockerHost.getPort();
+        ProcessBuilder pb = new ProcessBuilder(command);
+        //$env:DOCKER_HOST="tcp://10.211.0.31:2375"   tcp://10.211.0.31:2375
+
 
         //Variáveis de ambiente
-        //pb.environment().put("DOCKER_HOST", HOST);
+        pb.environment().put("DOCKER_HOST", HOST);
         // Junta stderr com stdout (opcional)
-        pb.redirectErrorStream(true);
+        //pb.redirectErrorStream(true);
 
         Process process = pb.start();
-        return new BufferedReader(
-                new InputStreamReader(process.getInputStream()));
+        return new BufferedReader(new InputStreamReader(process.getInputStream()));
+    }
+
+    public DockerHost getRequiredConnection() {
+        DockerHost dockerHost = connectionService.getActiveConnection();
+        if (dockerHost == null) {
+            throw new IllegalStateException(
+                    "Nenhuma conexão Docker está ativa"
+            );
+        }
+        return dockerHost;
     }
 
     public boolean container(String ID) {
         try {
-            String line;
+
             BufferedReader reader = make(List.of(DOCKER, PS, QUIET));
 
+            String line;
             while ((line = reader.readLine()) != null) {
                 if (line.equals(ID)) {
                     return true;
@@ -64,8 +85,18 @@ public class CommandService extends DockerComands {
      */
     public Optional<Object_Container> container(String ID, String Name) {
         try {
+            List<String> command = new ArrayList<>();
+            command.add(DOCKER);
+            command.add(PS);
+            command.add(FORMAT);
+            if (getRequiredConnection().isWslLocal()) {
+                command.add(FORMATO_CONTAINER_2);
+            } else {
+                command.add(FORMATO_CONTAINER_1);
+            }
+            BufferedReader reader = make(command);
+
             String line;
-            BufferedReader reader = make(List.of(DOCKER, PS, FORMAT, FORMATO_CONTAINER_1));
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
                 if (lines[0].equals(ID) || lines[2].equals(Name)) {
@@ -87,12 +118,15 @@ public class CommandService extends DockerComands {
         try {
             List<Object_Container> cs = new ArrayList<>();
             List<String> command = new ArrayList<>();
-            String line;
 
             command.add(DOCKER);
             command.add(PS);
             command.add(FORMAT);
-            command.add(FORMATO_CONTAINER_1);
+            if (getRequiredConnection().isWslLocal()) {
+                command.add(FORMATO_CONTAINER_2);
+            } else {
+                command.add(FORMATO_CONTAINER_1);
+            }
 
             if (all) {
                 command.add(ALL);
@@ -100,6 +134,7 @@ public class CommandService extends DockerComands {
 
             BufferedReader reader = make(command);
             int i = 0;
+            String line;
             while ((line = reader.readLine()) != null) {
                 i++;
                 String[] lines = line.split(";");

@@ -65,9 +65,13 @@ public class ConnectionController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteConnections(@PathVariable("id") UUID id) {
         try {
-            if (connectionService.findById(id).isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conexão não existe");
+            if (connectionService.findById(id).isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conexão não existe");
+            }
             connectionService.delete(id);
-            if (connectionService.findById(id).isEmpty()) return ResponseEntity.ok().body("Conexão deletada");
+            if (connectionService.findById(id).isEmpty()) {
+                return ResponseEntity.ok().body("Conexão deletada");
+            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("conexão não foi deletada");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar conexão: " + e);
@@ -85,9 +89,16 @@ public class ConnectionController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateConnections(@RequestBody DockerHost dh){
-        if(dh.equals(connectionService.update(dh))) return ResponseEntity.ok().build();
+    public ResponseEntity<?> updateConnections(@RequestBody DockerHost dh) {
+        if (dh.equals(connectionService.update(dh))) {
+            return ResponseEntity.ok().build();
+        }
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Conexão não atualizada");
     }
-}
 
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<?> activate(@PathVariable UUID id) {
+        connectionService.activate(id);
+        return ResponseEntity.ok().build();
+    }
+}
