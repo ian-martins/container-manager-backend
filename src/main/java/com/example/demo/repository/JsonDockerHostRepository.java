@@ -62,8 +62,7 @@ public class JsonDockerHostRepository implements DockerHostRepository {
 
             if (mapper.readTree(filePath).getNodeType() == JsonNodeType.ARRAY) {
                 System.out.println("Acessando connection.json em: " + filePath.getAbsolutePath());
-                connections = mapper.readValue(filePath, new TypeReference<List<DockerHost>>() {
-                });
+                connections = mapper.readValue(filePath, new TypeReference<List<DockerHost>>() {});
             }
             return connections;
         } catch (JacksonException e) {

@@ -9,7 +9,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.model.Usuario;
+import com.example.demo.config.DockerHost;
+import com.example.demo.entity.Usuario;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
@@ -71,6 +72,23 @@ public class JsonUserRepository implements UserRepository {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Usuario findByUsername(String name) {
+        ObjectMapper mapper = new ObjectMapper();
+        List<Usuario> usuarios = new ArrayList<>();
+
+        if (mapper.readTree(filePath).getNodeType() == JsonNodeType.ARRAY) { 
+            System.out.println("Acessando users.json em: " + filePath.getAbsolutePath());
+            usuarios = mapper.readValue(filePath, new TypeReference<List<Usuario>>() {});
+        }
+        for (int i = 0; i < usuarios.size(); i++) {
+            if (usuarios.get(i).getUsername().equals(name)) {
+                return usuarios.get(i);
+            }
+        }
+        return null;
     }
 
     @Override

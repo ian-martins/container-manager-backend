@@ -1,6 +1,6 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
-public class Object_Container {
+public class Container {
 
     private String ID;
     private String Image;
@@ -9,10 +9,10 @@ public class Object_Container {
     private String State;
     private String Status;
 
-    public Object_Container() {
+    public Container() {
     }
 
-    public Object_Container(String ID, String Image, String Names, String RunningFor, String State, String Status) {
+    public Container(String ID, String Image, String Names, String RunningFor, String State, String Status) {
         this.ID = ID;
         this.Image = Image;
         this.Names = Names;

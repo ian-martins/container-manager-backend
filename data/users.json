@@ -1,9 +1,9 @@
 [
     {
-        "id": 1,
-        "username": "admin",
+        "id": "77496aab-7629-439d-a798-84f8b7fe7164",
+        "username": "ian",
         "password": "$2a$10$H8nm061mlLeBJsQtrAkWdeOgG6.BxysHWUJ3gQAPI4LSQs7yAoT5.",
-        "dockerHostId": null,
+        "dockerHostId": "77496aab-7629-439d-a798-84f8b7fe7165",
         "role": "ADMIN"
     }
 ]

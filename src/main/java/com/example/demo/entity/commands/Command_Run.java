@@ -1,4 +1,4 @@
-package com.example.demo.model.commands;
+package com.example.demo.entity.commands;
 
 import java.util.List;
 

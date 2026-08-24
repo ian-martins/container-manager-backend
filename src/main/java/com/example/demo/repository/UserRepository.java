@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.example.demo.model.Usuario;
+import com.example.demo.entity.Usuario;
 
 public interface  UserRepository{
     
     List<Usuario> findAll();
     Optional<Usuario> findById(UUID id);
+    Usuario findByUsername(String name);
     Usuario save(Usuario usuario);
     Usuario update(Usuario usuario);
     void deleteById(UUID id);

@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Usuario implements UserDetails {
+    
     private UUID id;
     private String username;
     private String password;
@@ -69,11 +70,11 @@ public class Usuario implements UserDetails {
         this.password = password;
     }
 
-    public UUID getDockerHost() {
+    public UUID getDockerHostId() {
         return dockerHostId;
     }
 
-    public void setDockerHost(UUID dockerHostId) {
+    public void setDockerHostId(UUID dockerHostId) {
         this.dockerHostId = dockerHostId;
     }
 

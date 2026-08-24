@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.dto.LoginRequest;
+import com.example.demo.dto.LoginRequest;
 import com.example.demo.segurity.JwtService;
 
 @CrossOrigin(origins = "http://localhost:5173/")
@@ -31,17 +31,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestBody LoginRequest request
-    ) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         System.out.println("tentativa de login");
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                                 request.username(),
                                 request.password()
-                        )
-                );
+                        ));
 
         UserDetails userDetails =
                 (UserDetails) authentication.getPrincipal();

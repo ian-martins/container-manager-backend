@@ -1,7 +1,7 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 
-public class Object_Image {
+public class Image {
 
     private String Containers;
     private String CreatedAt;
@@ -14,10 +14,10 @@ public class Object_Image {
     private String Tag;
     private String UniqueSize;
 
-    public Object_Image() {
+    public Image() {
     }
 
-    public Object_Image(String Containers, String CreatedAt, String CreatedSince, String Digest, String ID, String Repository, String SharedSize, String Size, String Tag, String UniqueSize) {
+    public Image(String Containers, String CreatedAt, String CreatedSince, String Digest, String ID, String Repository, String SharedSize, String Size, String Tag, String UniqueSize) {
         this.Containers = Containers;
         this.CreatedAt = CreatedAt;
         this.CreatedSince = CreatedSince;

@@ -1,1 +1,23 @@
-[{"id":"84456414-dcd5-48d1-b678-633e61b55dae","name":"Host Oracle","host":"172.22.151.63","port":2375,"wslLocal":false},{"id":"77496aab-7629-439d-a798-84f8b7fe7165","name":"Host Oracle","host":"172.22.151.63","port":2375,"wslLocal":true},{"id":"b3f9b105-a561-4c57-9eb5-5a7272d16bf8","name":"Host Oracle","host":"10.211.0.31","port":2375,"wslLocal":true}]
+[
+    {
+        "id": "84456414-dcd5-48d1-b678-633e61b55dae",
+        "name": "Host Oracle",
+        "host": "172.22.151.63",
+        "port": 2375,
+        "wslLocal": false
+    },
+    {
+        "id": "77496aab-7629-439d-a798-84f8b7fe7165",
+        "name": "Host Oracle",
+        "host": "172.22.151.63",
+        "port": 2375,
+        "wslLocal": true
+    },
+    {
+        "id": "b3f9b105-a561-4c57-9eb5-5a7272d16bf8",
+        "name": "Host Oracle",
+        "host": "10.211.0.31",
+        "port": 2375,
+        "wslLocal": true
+    }
+]
