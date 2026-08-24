@@ -6,8 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.config.DockerHost;
-import com.example.demo.entity.Usuario;
+import com.example.demo.entity.DockerHost;
 import com.example.demo.repository.DockerHostRepository;
 
 @Service
@@ -28,15 +27,11 @@ public class ConnectionService {
     }
 
     public DockerHost save(DockerHost connection) {
-        if (connection.getId() == null) {
-            connection.setId(UUID.randomUUID());
-        }
-
         return repository.save(connection);
     }
 
     public DockerHost update(DockerHost connection) {
-        return repository.update(connection);
+        return repository.save(connection);
     }
 
     public void delete(UUID id) {
@@ -46,13 +41,4 @@ public class ConnectionService {
     public void deleteAll() {
         repository.deleteAll();
     }
-
-    public void activate(UUID id, Usuario usuario) {
-        DockerHost connection = findById(id).get();
-        if (connection == null) {
-            throw new RuntimeException("Conexão não encontrada");
-        }
-        usuario.setDockerHostId(connection.getId());
-    }
-    
 }

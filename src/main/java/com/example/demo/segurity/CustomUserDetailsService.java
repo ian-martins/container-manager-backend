@@ -5,23 +5,31 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.service.UserService;
+import com.example.demo.entity.Usuario;
+import com.example.demo.repository.UsuarioRepository;
 
 
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
-    
-    public CustomUserDetailsService(UserService  userService) {
-        this.userService = userService;
+    private final UsuarioRepository usuarioRepository;
+
+    public CustomUserDetailsService(UsuarioRepository  usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
-        return userService.findByUsername(username);
+         Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() ->
+                    new UsernameNotFoundException(
+                        "Usuário não encontrado: "
+                    )
+                );
+
+        return new CustomUserDetails(usuario);
     }
 }

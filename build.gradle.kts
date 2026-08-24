@@ -33,12 +33,14 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
     // PostgreSQL
-    // runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:postgresql")
 
+    // Spring Data JPA
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa") 
     // Lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
-
+ 
     implementation ("com.fasterxml.jackson.core:jackson-databind:2.19.0")
 
     // Testes

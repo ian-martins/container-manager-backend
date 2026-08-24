@@ -15,11 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.config.DockerHost;
 import com.example.demo.dto.GenericResponse;
 import com.example.demo.entity.Container;
+import com.example.demo.entity.DockerHost;
 import com.example.demo.entity.Usuario;
 import com.example.demo.entity.commands.Command_Run;
+import com.example.demo.segurity.CustomUserDetails;
 import com.example.demo.service.CommandService;
 import com.example.demo.service.ConnectionService;
 
@@ -36,9 +37,10 @@ public class HomeController {
 
     @GetMapping("/container")
     public ResponseEntity<?> containers(Authentication authentication) {
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
         DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
-
+        
         Optional<List<Container>> containers = commandService.containers(true, dockerHost);
         if (containers.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(containers);
@@ -49,7 +51,8 @@ public class HomeController {
 
     @GetMapping("/container/{id}")
     public ResponseEntity<?> container(@PathVariable("id") String id, Authentication authentication) {
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
         DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         Optional<Container> container = commandService.container(id, id, dockerHost);
@@ -62,7 +65,8 @@ public class HomeController {
 
     @PostMapping("/container/run")
     public ResponseEntity<?> run(@RequestBody Command_Run command_Run, Authentication authentication) {
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
         DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         commandService.run(command_Run, dockerHost);
@@ -71,7 +75,8 @@ public class HomeController {
 
     @GetMapping("/stop/{id}")
     public ResponseEntity<?> stop(@PathVariable("id") String id, Authentication authentication) {
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
         DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         try {
@@ -99,7 +104,8 @@ public class HomeController {
      */
     @GetMapping("/start/{id}")
     public ResponseEntity<?> start(@PathVariable("id") String id, Authentication authentication) {
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
         DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         try {
@@ -126,7 +132,8 @@ public class HomeController {
      */
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> remove(@PathVariable("id") String id, Authentication authentication) {
-        Usuario usuario = (Usuario) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
         DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         try {

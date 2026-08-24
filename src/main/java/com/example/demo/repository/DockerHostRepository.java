@@ -1,17 +1,12 @@
 package com.example.demo.repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.example.demo.config.DockerHost;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DockerHostRepository {
+import com.example.demo.entity.DockerHost;
 
-    List<DockerHost> findAll();
-    Optional<DockerHost> findById(UUID id);
-    DockerHost save(DockerHost connection);
-    DockerHost update(DockerHost connection);
-    void deleteById(UUID id);
-    void deleteAll();
+public interface DockerHostRepository extends JpaRepository<DockerHost, UUID> {
+    Optional<DockerHost> findByName(String name);
 }

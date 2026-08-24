@@ -9,15 +9,16 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.config.DockerHost;
+import com.example.demo.entity.DockerHost;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.JsonNodeType;
 
+@Deprecated
 @Repository
-public class JsonDockerHostRepository implements DockerHostRepository {
+public class JsonDockerHostRepository {
 
     private final File filePath;
 
@@ -25,7 +26,7 @@ public class JsonDockerHostRepository implements DockerHostRepository {
         this.filePath = new File(file);
     }
 
-    @Override
+    
     public DockerHost save(DockerHost connection) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -54,7 +55,7 @@ public class JsonDockerHostRepository implements DockerHostRepository {
             }
     }
 
-    @Override
+    
     public List<DockerHost> findAll() {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -70,7 +71,7 @@ public class JsonDockerHostRepository implements DockerHostRepository {
         }
     }
 
-    @Override
+    
     public Optional<DockerHost> findById(UUID id) {
         ObjectMapper mapper = new ObjectMapper();
         List<DockerHost> connections = new ArrayList<>();
@@ -89,7 +90,7 @@ public class JsonDockerHostRepository implements DockerHostRepository {
         return Optional.empty();
     }
 
-    @Override
+    
     public void deleteById(UUID id) {
         try {
             List<DockerHost> connections = findAll();
@@ -105,7 +106,7 @@ public class JsonDockerHostRepository implements DockerHostRepository {
         }
     }
 
-    @Override
+    
     public void deleteAll() {
         ObjectMapper mapper = new ObjectMapper();
         List<DockerHost> connections = new ArrayList<>();
@@ -116,7 +117,7 @@ public class JsonDockerHostRepository implements DockerHostRepository {
         }
     }
 
-    @Override
+    
     public DockerHost update(DockerHost connection){
         if(findById(connection.getId()).isEmpty()) return findById(connection.getId()).get();
         deleteById(connection.getId());

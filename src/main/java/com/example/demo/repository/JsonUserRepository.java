@@ -16,8 +16,8 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.JsonNodeType;
 
-@Repository
-public class JsonUserRepository implements UserRepository {
+@Deprecated
+public class JsonUserRepository  {
 
     private final File filePath;
 
@@ -25,7 +25,6 @@ public class JsonUserRepository implements UserRepository {
         this.filePath = new File(file);
     }
 
-    @Override
     public void deleteAll() {
         ObjectMapper mapper = new ObjectMapper();
         List<Usuario> usuarios = new ArrayList<>();
@@ -36,7 +35,6 @@ public class JsonUserRepository implements UserRepository {
         }
     }
 
-    @Override
     public void deleteById(UUID id) {
         try {
             List<Usuario> usuarios = findAll();
@@ -54,7 +52,6 @@ public class JsonUserRepository implements UserRepository {
         }
     }
 
-    @Override
     public Optional<Usuario> findById(UUID id) {
         ObjectMapper mapper = new ObjectMapper();
         List<Usuario> usuarios = new ArrayList<>();
@@ -73,7 +70,6 @@ public class JsonUserRepository implements UserRepository {
         return Optional.empty();
     }
 
-    @Override
     public Usuario findByUsername(String name) {
         ObjectMapper mapper = new ObjectMapper();
         List<Usuario> usuarios = new ArrayList<>();
@@ -90,7 +86,6 @@ public class JsonUserRepository implements UserRepository {
         return null;
     }
 
-    @Override
     public Usuario save(Usuario usuario) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -113,14 +108,12 @@ public class JsonUserRepository implements UserRepository {
         }
     }
 
-    @Override
     public Usuario update(Usuario usuario) {
         if(findById(usuario.getId()).isEmpty()) return findById(usuario.getId()).get();
         deleteById(usuario.getId());
         return save(usuario);
     }
 
-    @Override
     public List<Usuario> findAll() {
         try {
             ObjectMapper mapper = new ObjectMapper();

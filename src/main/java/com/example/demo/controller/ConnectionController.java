@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.config.DockerHost;
+import com.example.demo.entity.DockerHost;
 import com.example.demo.service.ConnectionService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,9 +30,9 @@ public class ConnectionController {
     public final ConnectionService connectionService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> newConnection(@RequestBody DockerHost dh) {
+    public ResponseEntity<?> newConnection(@RequestBody DockerHost dockerHost) {
         try {
-            DockerHost saved = connectionService.save(dh);
+            DockerHost saved = connectionService.save(dockerHost);
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar conexão: " + e);
@@ -89,9 +89,11 @@ public class ConnectionController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateConnections(@RequestBody DockerHost dh) {
-        if (dh.equals(connectionService.update(dh))) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity<?> updateConnections(@RequestBody DockerHost dockerHost) {
+        Optional<DockerHost> dockerHostOld = connectionService.findById(dockerHost.getId());
+        
+        if (dockerHostOld.isPresent()) {
+             return ResponseEntity.ok(connectionService.save(dockerHost));
         }
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Conexão não atualizada");
     }

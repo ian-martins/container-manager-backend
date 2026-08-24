@@ -8,19 +8,40 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Table(name = "usuarios")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Usuario implements UserDetails {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false)
     private String password;
-    private UUID dockerHostId; 
+
+    @Column(nullable = false)
     private String role;
 
+    private UUID dockerHostId;
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(
@@ -58,31 +79,4 @@ public class Usuario implements UserDetails {
         return true;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public UUID getDockerHostId() {
-        return dockerHostId;
-    }
-
-    public void setDockerHostId(UUID dockerHostId) {
-        this.dockerHostId = dockerHostId;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

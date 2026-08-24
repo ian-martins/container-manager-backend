@@ -9,9 +9,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.config.DockerHost;
 import com.example.demo.constants.DockerComands;
 import com.example.demo.entity.Container;
+import com.example.demo.entity.DockerHost;
 import com.example.demo.entity.Image;
 import com.example.demo.entity.commands.Command_Run;
 
@@ -21,8 +21,8 @@ public class CommandService extends DockerComands {
     private BufferedReader make(List<String> dockerCommand, DockerHost dockerHost) throws IOException {
         List<String> command = new ArrayList<>();
 
-        if (!dockerHost.isWslLocal()) {
-            command.add("WSL");
+        if (dockerHost.isWslLocal()) {
+            command.add("wsl");
         }
         command.addAll(dockerCommand);
 

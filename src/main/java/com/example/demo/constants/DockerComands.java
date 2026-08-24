@@ -35,7 +35,7 @@ public class DockerComands {
     public static String FORMATO_JSON = "json";
     public static String FORMATO_IMAGE_1 = "{{.Containers}};{{.CreatedAt}};{{.CreatedSince}};{{.Digest}};{{.ID}};{{.Repository}};{{.SharedSize}};{{.Size}};{{.Tag}};{{.UniqueSize}}";
     public static String FORMATO_IMAGE_2 = "{{.Containers}}\\;{{.CreatedAt}}\\;{{.CreatedSince}}\\;{{.Digest}}\\;{{.ID}}\\;{{.Repository}}\\;{{.SharedSize}}\\;{{.Size}}\\;{{.Tag}}\\;{{.UniqueSize}}";
-    public static String FORMATO_CONTAINER_1 = "{{.ID}}\\;{{.Image}}\\;{{.Names}}\\;{{.RunningFor}}\\;{{.State}}\\;{{.Status}}";
-    public static String FORMATO_CONTAINER_2 = "{{.ID}};{{.Image}};{{.Names}};{{.RunningFor}};{{.State}};{{.Status}}";
+    public static String FORMATO_CONTAINER_1 = "{{.ID}};{{.Image}};{{.Names}};{{.RunningFor}};{{.State}};{{.Status}}";
+    public static String FORMATO_CONTAINER_2 = "{{.ID}}\\;{{.Image}}\\;{{.Names}}\\;{{.RunningFor}}\\;{{.State}}\\;{{.Status}}";
 
 }
