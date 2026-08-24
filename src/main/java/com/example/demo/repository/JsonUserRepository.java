@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.config.DockerHost;
 import com.example.demo.entity.Usuario;
 
 import tools.jackson.core.JacksonException;

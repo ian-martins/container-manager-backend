@@ -1,12 +1,16 @@
 package com.example.demo.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.service.ConnectionService;
+import com.example.demo.dto.UsuarioUpdateRequest;
+import com.example.demo.entity.Usuario;
 import com.example.demo.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final ConnectionService connectionService;
     private final UserService userService;
     
     @GetMapping("/list")
@@ -25,5 +28,11 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll());
     }
     
-    //@PutMapping("/")
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody UsuarioUpdateRequest usuarioUpdateRequest, Authentication authentication){
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+        userService.update(usuario, usuarioUpdateRequest);
+        
+        return ResponseEntity.ok().build();
+    }
 }
