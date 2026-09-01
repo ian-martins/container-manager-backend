@@ -16,7 +16,7 @@ import com.example.demo.entity.Image;
 import com.example.demo.entity.commands.Command_Run;
 
 @Service
-public class CommandService extends DockerComands {
+public class DockerService extends DockerComands {
 
     private BufferedReader make(List<String> dockerCommand, DockerHost dockerHost) throws IOException {
         List<String> command = new ArrayList<>();

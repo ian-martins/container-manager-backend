@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-public record UsuarioRequestDTO(String id, String username, String dockerHostId, String password, String role) {
+public record UsuarioRequestDTO(String id, String username, String password, String role) {
     
 }
 /*

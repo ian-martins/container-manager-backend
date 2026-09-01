@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ResponseConnectionDTO;
 import com.example.demo.entity.DockerHost;
+import com.example.demo.entity.Usuario;
+import com.example.demo.segurity.CustomUserDetails;
 import com.example.demo.service.ConnectionService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,10 +45,26 @@ public class ConnectionController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> listConnections() {
+    public ResponseEntity<?> listConnections(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Usuario usuario = userDetails.getUsuario();
+
         try {
             List<DockerHost> listD = connectionService.findAll();
-            return ResponseEntity.ok(listD);
+            DockerHost dh = new DockerHost();
+            List<ResponseConnectionDTO> response = new ArrayList<>();
+
+            for (int i = 0; i < listD.size(); i++) {
+                dh = listD.get(i);
+                if (usuario.getDockerHostId().equals(dh.getId())) {
+                    response.add(dh.response(true));
+                }else{
+                    response.add(dh.response(false));
+                }
+                
+            }
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao Listar as conexões: " + e);
         }
@@ -91,9 +112,9 @@ public class ConnectionController {
     @PutMapping("/update")
     public ResponseEntity<?> updateConnections(@RequestBody DockerHost dockerHost) {
         Optional<DockerHost> dockerHostOld = connectionService.findById(dockerHost.getId());
-        
+
         if (dockerHostOld.isPresent()) {
-             return ResponseEntity.ok(connectionService.save(dockerHost));
+            return ResponseEntity.ok(connectionService.save(dockerHost));
         }
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Conexão não atualizada");
     }

@@ -21,8 +21,8 @@ import com.example.demo.entity.DockerHost;
 import com.example.demo.entity.Usuario;
 import com.example.demo.entity.commands.Command_Run;
 import com.example.demo.segurity.CustomUserDetails;
-import com.example.demo.service.CommandService;
 import com.example.demo.service.ConnectionService;
+import com.example.demo.service.DockerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,9 +30,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/home")
 @CrossOrigin(origins = "http://localhost:5173/")
 @RequiredArgsConstructor
-public class HomeController {
+public class DockerController {
 
-    private final CommandService commandService;
+    private final DockerService commandService;
     private final ConnectionService connectionService;
 
     @GetMapping("/container")

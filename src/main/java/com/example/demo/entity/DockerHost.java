@@ -2,6 +2,8 @@ package com.example.demo.entity;
 
 import java.util.UUID;
 
+import com.example.demo.dto.ResponseConnectionDTO;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,4 +32,7 @@ public class DockerHost {
     private Integer port;
     private boolean wslLocal;
 
+    public ResponseConnectionDTO response(boolean active){
+        return new ResponseConnectionDTO(id, name, host, port, wslLocal, active );
+    }
 }

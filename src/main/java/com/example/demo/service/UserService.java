@@ -28,20 +28,19 @@ public class UserService {
         this.securityConfig = securityConfig;
     }
 
-    public void salvarUsuario(Usuario usuario, UsuarioRequestDTO usuarioDTO) {
-        if (usuarioDTO.dockerHostId() != null && !usuarioDTO.dockerHostId().isBlank()) {
-            if (!dockerHostRepository.existsById(UUID.fromString(usuarioDTO.dockerHostId()))) {
-                throw new RuntimeException("Docker Host não encontrado");
-            }
-            usuario.setDockerHostId(UUID.fromString(usuarioDTO.dockerHostId()));
-        }
+    public Usuario salvarUsuario(Usuario usuario, UsuarioRequestDTO usuarioDTO) {
+   
         if (usuarioDTO.username() != null && !usuarioDTO.username().isBlank()) {
             usuario.setUsername(usuarioDTO.username());
         }
         if (usuarioDTO.password() != null && !usuarioDTO.password().isBlank()) {
             usuario.setPassword(securityConfig.passwordEncoder().encode(usuarioDTO.password()));
         }
-        userRepository.save(usuario);
+        return userRepository.save(usuario);
+    }
+    
+    public Usuario salvarUsuario(Usuario usuario) {
+        return userRepository.save(usuario);
     }
 
     public List<UsuarioResponseDTO> findAll() {
@@ -57,5 +56,10 @@ public class UserService {
                 .toList();
         return responseDTOs;
     }
+
+    public Usuario activeConn(Usuario usuario, UUID id){
+        usuario.setDockerHostId(id);
+        return salvarUsuario(usuario);
+    }    
 
 }
