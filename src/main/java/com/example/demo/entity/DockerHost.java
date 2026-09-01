@@ -33,6 +33,13 @@ public class DockerHost {
     private boolean wslLocal;
 
     public ResponseConnectionDTO response(boolean active){
-        return new ResponseConnectionDTO(id, name, host, port, wslLocal, active );
+        return new ResponseConnectionDTO(
+            id,
+            name != null ? name : "",
+            host != null ? host : "", 
+            port != 0    ? port.toString() : "", 
+            wslLocal, 
+            active
+        );
     }
 }

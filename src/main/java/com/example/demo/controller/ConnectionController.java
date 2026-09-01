@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.RequestDockerHostDTO;
 import com.example.demo.dto.ResponseConnectionDTO;
 import com.example.demo.entity.DockerHost;
 import com.example.demo.entity.Usuario;
@@ -35,9 +36,9 @@ public class ConnectionController {
     public final ConnectionService connectionService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> newConnection(@RequestBody DockerHost dockerHost) {
+    public ResponseEntity<?> newConnection(@RequestBody RequestDockerHostDTO dto) {
         try {
-            DockerHost saved = connectionService.save(dockerHost);
+            DockerHost saved = connectionService.save(new DockerHost(null, dto.name(), dto.host(), dto.port(), dto.wsl()));
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar conexão: " + e);
@@ -61,9 +62,7 @@ public class ConnectionController {
                 }else{
                     response.add(dh.response(false));
                 }
-                
             }
-
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao Listar as conexões: " + e);
