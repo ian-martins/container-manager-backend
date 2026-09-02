@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.constants.DockerComands;
 import com.example.demo.entity.Container;
-import com.example.demo.entity.DockerHost;
+import com.example.demo.entity.Host;
 import com.example.demo.entity.Image;
 import com.example.demo.entity.commands.Command_Run;
 
 @Service
 public class DockerService extends DockerComands {
 
-    private BufferedReader make(List<String> dockerCommand, DockerHost dockerHost) throws IOException {
+    private BufferedReader make(List<String> dockerCommand, Host dockerHost) throws IOException {
         List<String> command = new ArrayList<>();
 
         if (dockerHost.isWslLocal()) {
@@ -39,7 +39,7 @@ public class DockerService extends DockerComands {
         return new BufferedReader(new InputStreamReader(process.getInputStream()));
     }
 
-    public boolean container(String ID, DockerHost dockerHost) {
+    public boolean container(String ID, Host dockerHost) {
         try {
 
             BufferedReader reader = make(List.of(DOCKER, PS, QUIET), dockerHost);
@@ -64,7 +64,7 @@ public class DockerService extends DockerComands {
      * @param Name
      * @return Object_Container
      */
-    public Optional<Container> container(String ID, String Name, DockerHost dockerHost) {
+    public Optional<Container> container(String ID, String Name, Host dockerHost) {
         try {
             List<String> command = new ArrayList<>();
             command.add(DOCKER);
@@ -95,7 +95,7 @@ public class DockerService extends DockerComands {
      *
      * @return Optional List Object_Container
      */
-    public Optional<List<Container>> containers(boolean all, DockerHost dockerHost) {
+    public Optional<List<Container>> containers(boolean all, Host dockerHost) {
         try {
             List<Container> cs = new ArrayList<>();
             List<String> command = new ArrayList<>();
@@ -136,7 +136,7 @@ public class DockerService extends DockerComands {
      * @param ID
      * @return
      */
-    public Optional<Image> image(String ID, DockerHost dockerHost) {
+    public Optional<Image> image(String ID, Host dockerHost) {
         try {
             List<String> command = new ArrayList<>();
 
@@ -168,7 +168,7 @@ public class DockerService extends DockerComands {
      *
      * @return List Object_Image
      */
-    public Optional<List<Image>> images(DockerHost dockerHost) {
+    public Optional<List<Image>> images(Host dockerHost) {
         try {
             List<Image> images = new ArrayList<>();
             List<String> command = new ArrayList<>();
@@ -198,7 +198,7 @@ public class DockerService extends DockerComands {
      *
      * @param c Command_Run
      */
-    public void run(Command_Run c, DockerHost dockerHost) {
+    public void run(Command_Run c, Host dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(RUN);
@@ -256,7 +256,7 @@ public class DockerService extends DockerComands {
 
     }
 
-    public boolean stop(String id, DockerHost dockerHost) {
+    public boolean stop(String id, Host dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(STOP);
@@ -274,7 +274,7 @@ public class DockerService extends DockerComands {
         }
     }
 
-    public boolean remove(String id, DockerHost dockerHost) {
+    public boolean remove(String id, Host dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(RM);
@@ -293,7 +293,7 @@ public class DockerService extends DockerComands {
         }
     }
 
-    public boolean start(String id, DockerHost dockerHost) {
+    public boolean start(String id, Host dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(START);

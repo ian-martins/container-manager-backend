@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.UsuarioRequestDTO;
 import com.example.demo.dto.UsuarioResponseDTO;
 import com.example.demo.entity.Usuario;
-import com.example.demo.repository.DockerHostRepository;
+import com.example.demo.repository.HostRepository;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.segurity.SecurityConfig;
 
@@ -16,14 +16,14 @@ import com.example.demo.segurity.SecurityConfig;
 public class UserService {
 
     private final UsuarioRepository userRepository;
-    private final DockerHostRepository dockerHostRepository;
+    private final HostRepository hostRepository;
 
     private final SecurityConfig securityConfig;
 
-    public UserService(DockerHostRepository dockerHostRepository, UsuarioRepository userRepository,
+    public UserService(HostRepository hostRepository, UsuarioRepository userRepository,
             ConnectionService connectionService,
             SecurityConfig securityConfig) {
-        this.dockerHostRepository = dockerHostRepository;
+        this.hostRepository = hostRepository;
         this.userRepository = userRepository;
         this.securityConfig = securityConfig;
     }

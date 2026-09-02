@@ -21,7 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DockerHost {
+public class Host {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.GenericResponse;
 import com.example.demo.entity.Container;
-import com.example.demo.entity.DockerHost;
+import com.example.demo.entity.Host;
 import com.example.demo.entity.Usuario;
 import com.example.demo.entity.commands.Command_Run;
 import com.example.demo.segurity.CustomUserDetails;
@@ -36,10 +37,11 @@ public class DockerController {
     private final ConnectionService connectionService;
 
     @GetMapping("/container")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'VIEWER')")
     public ResponseEntity<?> containers(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
-        DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
+        Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
         
         Optional<List<Container>> containers = commandService.containers(true, dockerHost);
         if (containers.isEmpty()) {
@@ -50,10 +52,11 @@ public class DockerController {
     }
 
     @GetMapping("/container/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'VIEWER')")
     public ResponseEntity<?> container(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
-        DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
+        Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         Optional<Container> container = commandService.container(id, id, dockerHost);
         if (container.isEmpty()) {
@@ -67,17 +70,18 @@ public class DockerController {
     public ResponseEntity<?> run(@RequestBody Command_Run command_Run, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
-        DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
+        Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         commandService.run(command_Run, dockerHost);
         return ResponseEntity.ok().body("criado");
     }
 
     @GetMapping("/stop/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> stop(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
-        DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
+        Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         try {
             if (commandService.container(id, "", dockerHost).isEmpty()) {
@@ -103,10 +107,11 @@ public class DockerController {
      * @return
      */
     @GetMapping("/start/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> start(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
-        DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
+        Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         try {
             if (!commandService.container(id, "", dockerHost).isEmpty()) {
@@ -131,10 +136,11 @@ public class DockerController {
      * @return
      */
     @DeleteMapping("/remove/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> remove(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
-        DockerHost dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
+        Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
         try {
             if (commandService.container(id, dockerHost)) {

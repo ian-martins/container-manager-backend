@@ -6,31 +6,31 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.entity.DockerHost;
-import com.example.demo.repository.DockerHostRepository;
+import com.example.demo.entity.Host;
+import com.example.demo.repository.HostRepository;
 
 @Service
 public class ConnectionService {
 
-    private final DockerHostRepository repository;
+    private final HostRepository repository;
 
-    public ConnectionService(DockerHostRepository repository) {
+    public ConnectionService(HostRepository repository) {
         this.repository = repository;
     }
 
-    public List<DockerHost> findAll() {
+    public List<Host> findAll() {
         return repository.findAll();
     }
 
-    public Optional<DockerHost> findById(UUID id) {
+    public Optional<Host> findById(UUID id) {
         return repository.findById(id);
     }
 
-    public DockerHost save(DockerHost connection) {
+    public Host save(Host connection) {
         return repository.save(connection);
     }
 
-    public DockerHost update(DockerHost connection) {
+    public Host update(Host connection) {
         return repository.save(connection);
     }
 

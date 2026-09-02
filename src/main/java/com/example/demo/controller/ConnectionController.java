@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.RequestDockerHostDTO;
 import com.example.demo.dto.ResponseConnectionDTO;
-import com.example.demo.entity.DockerHost;
+import com.example.demo.entity.Host;
 import com.example.demo.entity.Usuario;
 import com.example.demo.segurity.CustomUserDetails;
 import com.example.demo.service.ConnectionService;
@@ -38,7 +38,7 @@ public class ConnectionController {
     @PostMapping("/new")
     public ResponseEntity<?> newConnection(@RequestBody RequestDockerHostDTO dto) {
         try {
-            DockerHost saved = connectionService.save(new DockerHost(null, dto.name(), dto.host(), dto.port(), dto.wsl()));
+            Host saved = connectionService.save(new Host(null, dto.name(), dto.host(), dto.port(), dto.wsl()));
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao salvar conexão: " + e);
@@ -51,8 +51,8 @@ public class ConnectionController {
         Usuario usuario = userDetails.getUsuario();
 
         try {
-            List<DockerHost> listD = connectionService.findAll();
-            DockerHost dh = new DockerHost();
+            List<Host> listD = connectionService.findAll();
+            Host dh = new Host();
             List<ResponseConnectionDTO> response = new ArrayList<>();
 
             for (int i = 0; i < listD.size(); i++) {
@@ -72,7 +72,7 @@ public class ConnectionController {
     @GetMapping("/list/{id}")
     public ResponseEntity<?> listConnections(@PathVariable("id") UUID id) {
         try {
-            Optional<DockerHost> optional = connectionService.findById(id);
+            Optional<Host> optional = connectionService.findById(id);
             if (optional.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("conexão não encontrada");
             }
@@ -109,8 +109,8 @@ public class ConnectionController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateConnections(@RequestBody DockerHost dockerHost) {
-        Optional<DockerHost> dockerHostOld = connectionService.findById(dockerHost.getId());
+    public ResponseEntity<?> updateConnections(@RequestBody Host dockerHost) {
+        Optional<Host> dockerHostOld = connectionService.findById(dockerHost.getId());
 
         if (dockerHostOld.isPresent()) {
             return ResponseEntity.ok(connectionService.save(dockerHost));
