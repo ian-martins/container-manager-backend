@@ -10,11 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Usuario implements UserDetails {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -39,16 +40,22 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     private UUID dockerHostId;
-    
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        String authority = "ROLE_" + role.getName();
+
+        System.out.println("ROLE DO BANCO: [" + role.getName() + "]");
+        System.out.println("AUTHORITY GERADA: [" + authority + "]");
+
         return List.of(
-            new SimpleGrantedAuthority("ROLE_" + role)
-        );
+                new SimpleGrantedAuthority(authority));
     }
 
     @Override

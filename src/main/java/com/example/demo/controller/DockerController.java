@@ -37,7 +37,6 @@ public class DockerController {
     private final ConnectionService connectionService;
 
     @GetMapping("/container")
-    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'VIEWER')")
     public ResponseEntity<?> containers(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -52,7 +51,6 @@ public class DockerController {
     }
 
     @GetMapping("/container/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'VIEWER')")
     public ResponseEntity<?> container(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -77,7 +75,6 @@ public class DockerController {
     }
 
     @GetMapping("/stop/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> stop(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -107,7 +104,6 @@ public class DockerController {
      * @return
      */
     @GetMapping("/start/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> start(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -136,7 +132,6 @@ public class DockerController {
      * @return
      */
     @DeleteMapping("/remove/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> remove(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();

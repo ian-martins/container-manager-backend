@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.example.demo.dto.ResponseConnectionDTO;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +28,9 @@ public class Host {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(unique=true)
     private String name;
+    
     private String host;
     private Integer port;
     private boolean wslLocal;

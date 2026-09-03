@@ -1,7 +1,5 @@
 package com.example.demo.config;
 
-import java.util.Optional;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,59 +8,52 @@ import com.example.demo.entity.Host;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.Usuario;
 import com.example.demo.repository.HostRepository;
+import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.segurity.SecurityConfig;
 
 @Configuration
 public class DataLoader {
 
+    String ADMIN_PASS = "123456";
+    String ADMIN_NAME = "admin";
+    String HOST_NAME = "admin";
+    String HOST_IP = "admin";
+    int HOST_PORT = 0;
+
     @Bean
-    public CommandLineRunner addDockerHost(HostRepository dockerHostRepository) {
+    public CommandLineRunner load(HostRepository hostRepository, RoleRepository roleRepository,
+            UsuarioRepository usuarioRepository, SecurityConfig securityConfig) {
         return args -> {
-            String name = "WSL";
+            String PASS = securityConfig.passwordEncoder().encode(ADMIN_PASS);
 
-            Optional<Host> host = dockerHostRepository.findByName(name);
+            Role role = new Role(null, "ADMIN");
+            Host host = new Host(null, HOST_NAME, HOST_IP, HOST_PORT, true);
 
-            if (!host.isPresent()) {
-                Host dHost = new Host(null, name, "localhost", 5000, true);
-                dockerHostRepository.save(dHost);
-                System.out.println("Novo host criado.");
+            if (!hostRepository.findByName(HOST_NAME).isPresent()) {
+                hostRepository.save(host);
+                System.out.println("Host padrão criado.");
             }
-        };
-    }
+            if (!roleRepository.findByName("ADMIN").isPresent()) {
+                roleRepository.save(role);
+                System.out.println("Role ADMIN criado.");
+            }
 
-    @Bean
-    public CommandLineRunner addUsuario(UsuarioRepository usuarioRepository, HostRepository dockerHostRepository, SecurityConfig securityConfig) {
-        return args -> {
-            String admin = "admin";
-            String operator = "operator";
-            String viewer = "viewer";
-            String pass = securityConfig.passwordEncoder().encode("123456");
-            Optional<Host> host = dockerHostRepository.findByName("WSL");
-            Optional<Usuario> adminOpt = usuarioRepository.findByUsername(admin);
-            Optional<Usuario> operatorOpt = usuarioRepository.findByUsername(operator);
-            Optional<Usuario> viewerOpt = usuarioRepository.findByUsername(viewer);
-            
-            if (!adminOpt.isPresent() && host.isPresent()) {
-                Usuario nUsuario = new Usuario(null, admin, pass, Role.ADMIN, host.get().getId());
-                usuarioRepository.save(nUsuario);
+            if(!usuarioRepository.findByUsername(ADMIN_NAME).isPresent()){
+                Usuario usuario = new Usuario(null, ADMIN_NAME, PASS, roleRepository.findByName("ADMIN").get(), hostRepository.findByName(HOST_NAME).get().getId());
+                usuarioRepository.save(usuario);
                 System.out.println("Novo ADMIN criado.");
             }
-            if (!operatorOpt.isPresent() && host.isPresent()) {
-                Usuario nUsuario = new Usuario(null, operator, pass, Role.OPERATOR, host.get().getId());
-                usuarioRepository.save(nUsuario);
-                System.out.println("Novo OPERATOR criado.");
-            }
-            if (!viewerOpt.isPresent() && host.isPresent()) {
-                Usuario nUsuario = new Usuario(null, viewer, pass, Role.VIEWER, host.get().getId());
-                usuarioRepository.save(nUsuario);
-                System.out.println("Novo VIEWER criado.");
-            }
-            
-            
-            
-            
+
         };
     }
-
 }
+
+/*
+ [ERROR: null value in column "name" of relation "usuarios" violates not-null constraint
+  Detalhe: Failing row contains
+(8cff086c-fcf5-4e89-8327-2f3882e5d843, 99b2bef4-be9a-4ec7-8639-a098d487c0cc, $2a$10$1pFWzWKfKF7Egf/m4bnqwOm900nznr7TGZKCx8HHmvK3VtDr.sjwG, admin, 616bc7be-f0e7-48b7-ac22-0e830af91903, null).] 
+insert into usuarios (docker_host_id,password,role_id,username,id) values (?,?,?,?,?)];
+ SQL [insert into usuarios (docker_host_id,password,role_id,username,id) values (?,?,?,?,?)]; constraint [name]
+
+*/
