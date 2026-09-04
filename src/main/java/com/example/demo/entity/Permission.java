@@ -1,13 +1,39 @@
 package com.example.demo.entity;
 
-public enum Permission {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-    CONTAINER_READ,
-    CONTAINER_CREATE,
-    CONTAINER_START,
-    CONTAINER_STOP,
-    CONTAINER_RESTART,
-    CONTAINER_DELETE,
-    CONTAINER_LOGS,
-    CONTAINER_EXEC
+@Entity
+@Table(name = "permission")
+public class Permission {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    public Permission() {
+    }
+
+    public Permission(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

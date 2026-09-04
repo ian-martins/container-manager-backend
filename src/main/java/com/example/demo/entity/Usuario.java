@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,19 +39,20 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    @Column(name = "host_id", nullable = false)
     private UUID dockerHostId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
+        System.out.println("ROLE OBJECT: " + role);
+        System.out.println("ROLE NAME: " + role.getName());
         String authority = "ROLE_" + role.getName();
 
-        System.out.println("ROLE DO BANCO: [" + role.getName() + "]");
-        System.out.println("AUTHORITY GERADA: [" + authority + "]");
+        System.out.println("AUTHORITY: " + authority);
 
         return List.of(
                 new SimpleGrantedAuthority(authority));

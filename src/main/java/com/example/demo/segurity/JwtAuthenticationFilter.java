@@ -50,12 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (username != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             System.out.println("CARREGANDO USUARIO...");
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             System.out.println("USUARIO CARREGADO: " + userDetails.getUsername());
-            System.out.println("AUTHORITIES: " + userDetails.getAuthorities());
+            System.out.println("AUTHORITIES: " + userDetails.getAuthorities().toString());
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 System.out.println("TOKEN VALIDO");

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TesteController {
 
     @GetMapping("/teste")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('CONTAINER_DELETE')")
     public ResponseEntity<?> teste(Authentication authentication) {
         System.out.println("===== ENTROU NO CONTROLLER =====");
         System.out.println("USUARIO: " + authentication.getPrincipal());
