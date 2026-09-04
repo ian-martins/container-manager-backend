@@ -61,5 +61,4 @@ public class UserService {
         usuario.setDockerHostId(id);
         return salvarUsuario(usuario);
     }    
-
 }

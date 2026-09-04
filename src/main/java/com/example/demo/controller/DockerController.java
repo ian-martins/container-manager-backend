@@ -37,6 +37,7 @@ public class DockerController {
     private final ConnectionService connectionService;
 
     @GetMapping("/container")
+    @PreAuthorize("hasAuthority('CONTAINER_READ')")
     public ResponseEntity<?> containers(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -51,11 +52,12 @@ public class DockerController {
     }
 
     @GetMapping("/container/{id}")
+    @PreAuthorize("hasAuthority('CONTAINER_READ')")
     public ResponseEntity<?> container(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
         Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
-
+        
         Optional<Container> container = commandService.container(id, id, dockerHost);
         if (container.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Container Não Encontrado");
@@ -63,8 +65,9 @@ public class DockerController {
             return ResponseEntity.ok().body(container);
         }
     }
-
+    
     @PostMapping("/container/run")
+    @PreAuthorize("hasAuthority('CONTAINER_CREATE')")
     public ResponseEntity<?> run(@RequestBody Command_Run command_Run, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -75,6 +78,7 @@ public class DockerController {
     }
 
     @GetMapping("/stop/{id}")
+    @PreAuthorize("hasAuthority('CONTAINER_STOP')")
     public ResponseEntity<?> stop(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -104,6 +108,7 @@ public class DockerController {
      * @return
      */
     @GetMapping("/start/{id}")
+    @PreAuthorize("hasAuthority('CONTAINER_START')")
     public ResponseEntity<?> start(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -132,6 +137,7 @@ public class DockerController {
      * @return
      */
     @DeleteMapping("/remove/{id}")
+    @PreAuthorize("hasAuthority('CONTAINER_DELETE')")
     public ResponseEntity<?> remove(@PathVariable("id") String id, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();

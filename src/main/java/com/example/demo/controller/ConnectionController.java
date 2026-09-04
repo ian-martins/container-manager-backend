@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,8 +35,9 @@ import lombok.RequiredArgsConstructor;
 public class ConnectionController {
 
     public final ConnectionService connectionService;
-
+    
     @PostMapping("/new")
+    @PreAuthorize("hasAuthority('CONNECTION_CREATE')")
     public ResponseEntity<?> newConnection(@RequestBody RequestDockerHostDTO dto) {
         try {
             Host saved = connectionService.save(new Host(null, dto.name(), dto.host(), dto.port(), dto.wsl()));
@@ -46,6 +48,7 @@ public class ConnectionController {
     }
 
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('CONNECTION_READ')")
     public ResponseEntity<?> listConnections(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
@@ -70,6 +73,7 @@ public class ConnectionController {
     }
 
     @GetMapping("/list/{id}")
+    @PreAuthorize("hasAuthority('CONNECTION_READ')")
     public ResponseEntity<?> listConnections(@PathVariable("id") UUID id) {
         try {
             Optional<Host> optional = connectionService.findById(id);
@@ -83,6 +87,7 @@ public class ConnectionController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAuthority('CONNECTION_DELETE')")
     public ResponseEntity<?> deleteConnections(@PathVariable("id") UUID id) {
         try {
             if (connectionService.findById(id).isEmpty()) {
@@ -99,6 +104,7 @@ public class ConnectionController {
     }
 
     @DeleteMapping("/delete/all")
+    @PreAuthorize("hasAuthority('CONNECTION_DELETE')")
     public ResponseEntity<?> deleteConnections() {
         try {
             connectionService.deleteAll();
@@ -109,6 +115,7 @@ public class ConnectionController {
     }
 
     @PutMapping("/update")
+    @PreAuthorize("hasAuthority('CONNECTION_UPDATE')")
     public ResponseEntity<?> updateConnections(@RequestBody Host dockerHost) {
         Optional<Host> dockerHostOld = connectionService.findById(dockerHost.getId());
 

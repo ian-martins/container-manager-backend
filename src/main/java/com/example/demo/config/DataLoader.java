@@ -22,6 +22,7 @@ public class DataLoader {
     // configuraçao da aplicação
     String ADMIN_PASS = "123456";
     String ADMIN_NAME = "admin";
+    String TESTE_NAME = "user";
     String HOST_NAME = "admin";
     String HOST_IP = "admin";
     int HOST_PORT = 0;
@@ -43,12 +44,19 @@ public class DataLoader {
                 return hostRepository.save(novoHost);
             });
 
+            // Containers
             Permission read = criarPermission(permissionRepository, "CONTAINER_READ");
             Permission create = criarPermission(permissionRepository, "CONTAINER_CREATE");
             Permission start = criarPermission(permissionRepository, "CONTAINER_START");
             Permission stop = criarPermission(permissionRepository, "CONTAINER_STOP");
             Permission restart = criarPermission(permissionRepository, "CONTAINER_RESTART");
             Permission delete = criarPermission(permissionRepository, "CONTAINER_DELETE");
+
+            // Connections
+            Permission createConn = criarPermission(permissionRepository, "CONNECTION_CREATE");
+            Permission readConn = criarPermission(permissionRepository, "CONNECTION_READ");
+            Permission deleteConn = criarPermission(permissionRepository, "CONNECTION_DELETE");
+            Permission updateConn = criarPermission(permissionRepository, "CONNECTION_UPDATE");
 
             Role admin = roleRepository.findByName("ADMIN")
                     .orElseGet(() -> {
@@ -64,15 +72,21 @@ public class DataLoader {
                         return roleRepository.save(role);
                     });
 
-            admin.getPermissions().addAll(Set.of(read, create, start, stop, restart, delete));
+            admin.getPermissions().addAll(Set.of(read,create,start,stop,restart,delete,createConn,readConn,deleteConn,updateConn));
             roleRepository.save(admin);
-            user.getPermissions().addAll(Set.of(read));
+            
+            user.getPermissions().addAll(Set.of(read, readConn));
             roleRepository.save(user);
 
             if (!usuarioRepository.findByUsername(ADMIN_NAME).isPresent()) {
                 Usuario usuario = new Usuario(null, ADMIN_NAME, PASS, admin, host.getId());
                 usuarioRepository.save(usuario);
                 System.out.println("Novo ADMIN criado.");
+            }
+            if (!usuarioRepository.findByUsername(TESTE_NAME).isPresent()) {
+                Usuario usuario = new Usuario(null, TESTE_NAME, PASS, user, host.getId());
+                usuarioRepository.save(usuario);
+                System.out.println("Novo usuario criado.");
             }
         };
     }
