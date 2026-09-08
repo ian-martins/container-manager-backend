@@ -194,11 +194,11 @@ public class DockerService extends DockerComands {
     }
 
     /**
-     * Iniciador de Containers
+     * Iniciador de Containers 
      *
      * @param c Command_Run
      */
-    public void run(Command_Run c, Host dockerHost) {
+    public boolean  run(Command_Run c, Host dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(RUN);
@@ -251,7 +251,9 @@ public class DockerService extends DockerComands {
         command.add(c.getImage());
         try {
             make(command, dockerHost);
+            return container(c.getName(), dockerHost);
         } catch (IOException ex) {
+            return false;
         }
 
     }

@@ -42,7 +42,7 @@ public class DockerController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
         Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
-        
+
         Optional<List<Container>> containers = commandService.containers(true, dockerHost);
         if (containers.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(containers);
@@ -57,7 +57,7 @@ public class DockerController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
         Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
-        
+
         Optional<Container> container = commandService.container(id, id, dockerHost);
         if (container.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Container Não Encontrado");
@@ -65,7 +65,7 @@ public class DockerController {
             return ResponseEntity.ok().body(container);
         }
     }
-    
+
     @PostMapping("/container/run")
     @PreAuthorize("hasAuthority('CONTAINER_CREATE')")
     public ResponseEntity<?> run(@RequestBody Command_Run command_Run, Authentication authentication) {
@@ -73,8 +73,10 @@ public class DockerController {
         Usuario usuario = userDetails.getUsuario();
         Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
 
-        commandService.run(command_Run, dockerHost);
-        return ResponseEntity.ok().body("criado");
+        if (commandService.run(command_Run, dockerHost)) {
+            return ResponseEntity.ok().body("criado");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não criado");
     }
 
     @GetMapping("/stop/{id}")
@@ -147,7 +149,8 @@ public class DockerController {
             if (commandService.container(id, dockerHost)) {
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
-                        .body(new GenericResponse(id, false, null, "Impossivel Deletar Container " + id + ", esta Rodando!"));
+                        .body(new GenericResponse(id, false, null,
+                                "Impossivel Deletar Container " + id + ", esta Rodando!"));
             }
             commandService.remove(id, dockerHost);
             return ResponseEntity
