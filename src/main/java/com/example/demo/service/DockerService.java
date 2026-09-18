@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import com.example.demo.constants.DockerComands;
 import com.example.demo.entity.Container;
 import com.example.demo.entity.Host;
 import com.example.demo.entity.Image;
-import com.example.demo.entity.commands.Command_Run;
+import com.example.demo.entity.commands.Run;
 
 @Service
 public class DockerService extends DockerComands {
@@ -28,12 +29,12 @@ public class DockerService extends DockerComands {
 
         String HOST = "tcp://" + dockerHost.getHost() + ":" + dockerHost.getPort();
         ProcessBuilder pb = new ProcessBuilder(command);
-        //$env:DOCKER_HOST="tcp://10.211.0.31:2375"   tcp://10.211.0.31:2375
+        // $env:DOCKER_HOST="tcp://10.211.0.31:2375" tcp://10.211.0.31:2375
 
-        //Variáveis de ambiente
+        // Variáveis de ambiente
         pb.environment().put("DOCKER_HOST", HOST);
         // Junta stderr com stdout (opcional)
-        //pb.redirectErrorStream(true);
+        // pb.redirectErrorStream(true);
 
         Process process = pb.start();
         return new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -69,6 +70,7 @@ public class DockerService extends DockerComands {
             List<String> command = new ArrayList<>();
             command.add(DOCKER);
             command.add(PS);
+            command.add(ALL);
             command.add(FORMAT);
             if (dockerHost.isWslLocal()) {
                 command.add(FORMATO_CONTAINER_2);
@@ -154,7 +156,8 @@ public class DockerService extends DockerComands {
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
                 if (lines[4].equals(ID)) {
-                    return Optional.ofNullable(new Image(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6], lines[7], lines[8], lines[9]));
+                    return Optional.ofNullable(new Image(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5],
+                            lines[6], lines[7], lines[8], lines[9]));
                 }
             }
         } catch (IOException e) {
@@ -185,7 +188,8 @@ public class DockerService extends DockerComands {
             BufferedReader reader = make(command, dockerHost);
             while ((line = reader.readLine()) != null) {
                 String[] lines = line.split(";");
-                images.add(new Image(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6], lines[7], lines[8], lines[9]));
+                images.add(new Image(lines[0], lines[1], lines[2], lines[3], lines[4], lines[5], lines[6], lines[7],
+                        lines[8], lines[9]));
             }
             return Optional.ofNullable(images);
         } catch (IOException e) {
@@ -194,11 +198,11 @@ public class DockerService extends DockerComands {
     }
 
     /**
-     * Iniciador de Containers 
+     * Iniciador de Containers
      *
      * @param c Command_Run
      */
-    public boolean  run(Command_Run c, Host dockerHost) {
+    public Optional<Container> run(Run c, Host dockerHost) {
         List<String> command = new ArrayList<>();
         command.add(DOCKER);
         command.add(RUN);
@@ -250,12 +254,14 @@ public class DockerService extends DockerComands {
         }
         command.add(c.getImage());
         try {
-            make(command, dockerHost);
-            return container(c.getName(), dockerHost);
+            printAndReturn(RUN, "Criando Container..");
+            BufferedReader reader = make(command, dockerHost);
+            //CORRRIGIR// 
+            String line = printAndReturn(RUN, reader.readLine());
+            return container(line.substring(0, 12), c.getName(), dockerHost);
         } catch (IOException ex) {
-            return false;
+            return Optional.empty();
         }
-
     }
 
     public boolean stop(String id, Host dockerHost) {
@@ -264,6 +270,7 @@ public class DockerService extends DockerComands {
         command.add(STOP);
         command.add(id);
         try {
+
             String line;
             BufferedReader reader = make(command, dockerHost);
             System.out.println("Comando " + command + " Executado!");
@@ -314,4 +321,8 @@ public class DockerService extends DockerComands {
         }
     }
 
+    private String printAndReturn(String metodo, String s) {
+        System.out.println(metodo.toUpperCase() + ": " + s);
+        return s;
+    }
 }

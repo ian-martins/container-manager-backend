@@ -20,7 +20,7 @@ import com.example.demo.dto.GenericResponse;
 import com.example.demo.entity.Container;
 import com.example.demo.entity.Host;
 import com.example.demo.entity.Usuario;
-import com.example.demo.entity.commands.Command_Run;
+import com.example.demo.entity.commands.Run;
 import com.example.demo.segurity.CustomUserDetails;
 import com.example.demo.service.ConnectionService;
 import com.example.demo.service.DockerService;
@@ -68,16 +68,17 @@ public class DockerController {
 
     @PostMapping("/container/run")
     @PreAuthorize("hasAuthority('CONTAINER_CREATE')")
-    public ResponseEntity<?> run(@RequestBody Command_Run command_Run, Authentication authentication) {
+    public ResponseEntity<?> run(@RequestBody Run run, Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Usuario usuario = userDetails.getUsuario();
         Host dockerHost = connectionService.findById(usuario.getDockerHostId()).get();
-
-        if (commandService.run(command_Run, dockerHost)) {
-            return ResponseEntity.ok().body("criado");
+        try {
+            Container container = commandService.run(run, dockerHost).get();
+            return ResponseEntity.ok().body(container);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericResponse(null, false, ex.getMessage(), "Erro"));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não criado");
-    }
+    }//
 
     @GetMapping("/stop/{id}")
     @PreAuthorize("hasAuthority('CONTAINER_STOP')")
