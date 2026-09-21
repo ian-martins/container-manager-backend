@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,19 +18,19 @@ public class UserService {
 
     private final UsuarioRepository userRepository;
     private final HostRepository hostRepository;
+    private final ConnectionService connectionService;
 
     private final SecurityConfig securityConfig;
 
-    public UserService(HostRepository hostRepository, UsuarioRepository userRepository,
-            ConnectionService connectionService,
-            SecurityConfig securityConfig) {
+    public UserService(HostRepository hostRepository, UsuarioRepository userRepository,ConnectionService connectionService,SecurityConfig securityConfig) {
         this.hostRepository = hostRepository;
+        this.connectionService = connectionService;
         this.userRepository = userRepository;
         this.securityConfig = securityConfig;
     }
 
     public Usuario salvarUsuario(Usuario usuario, UsuarioRequestDTO usuarioDTO) {
-   
+
         if (usuarioDTO.username() != null && !usuarioDTO.username().isBlank()) {
             usuario.setUsername(usuarioDTO.username());
         }
@@ -38,27 +39,32 @@ public class UserService {
         }
         return userRepository.save(usuario);
     }
-    
+
     public Usuario salvarUsuario(Usuario usuario) {
         return userRepository.save(usuario);
     }
 
     public List<UsuarioResponseDTO> findAll() {
-        // como transformo isso:
         List<Usuario> usuarios = userRepository.findAll();
-        // nisso:
-        List<UsuarioResponseDTO> responseDTOs = usuarios.stream()
-                .map(usuario -> new UsuarioResponseDTO(
-                        usuario.getId().toString(),
-                        usuario.getDockerHostId() != null ? usuario.getDockerHostId().toString() : null,
-                        usuario.getRole(),
-                        usuario.getUsername()))
-                .toList();
-        return responseDTOs;
+        List<UsuarioResponseDTO> response = new ArrayList<>();
+
+        for (int i = 0; i < usuarios.size(); i++) {
+            List<String> dados = usuarios.get(i).response();
+
+            response.add(new UsuarioResponseDTO(
+                UUID.fromString(dados.get(0)), 
+                dados.get(1),
+                UUID.fromString(dados.get(2)), 
+                connectionService.findById(UUID.fromString(dados.get(2))).get().getName(),
+                dados.get(3)
+            ));
+        }
+
+        return response;
     }
 
-    public Usuario activeConn(Usuario usuario, UUID id){
+    public Usuario activeConn(Usuario usuario, UUID id) {
         usuario.setDockerHostId(id);
         return salvarUsuario(usuario);
-    }    
+    }
 }

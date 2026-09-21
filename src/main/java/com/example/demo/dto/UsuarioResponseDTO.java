@@ -1,7 +1,7 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.Role;
+import java.util.UUID;
 
-public record UsuarioResponseDTO(String id, String dockerHostId, Role role, String username) {
+public record UsuarioResponseDTO(UUID id, String username, UUID dockerHostId, String hostName, String role) {
     
 }

@@ -20,9 +20,10 @@ import com.example.demo.segurity.SecurityConfig;
 public class DataLoader {
     // isso no futuro sera configurado para uma variavel de ambiente para a primeira
     // configuraçao da aplicação
-    String ADMIN_PASS = "123456";
+    String ADMIN_PASS = "i*n123456";
     String ADMIN_NAME = "admin";
-    String TESTE_NAME = "user";
+    String USER_PASS = "123456";
+    String USER_NAME = "user";
     String HOST_NAME = "admin";
     String HOST_IP = "admin";
     int HOST_PORT = 0;
@@ -36,7 +37,8 @@ public class DataLoader {
             SecurityConfig securityConfig) {
         return args -> {
             // Criptografa a senha
-            String PASS = securityConfig.passwordEncoder().encode(ADMIN_PASS);
+            String APASS = securityConfig.passwordEncoder().encode(ADMIN_PASS);
+            String UPASS = securityConfig.passwordEncoder().encode(USER_PASS);
 
             Host host = hostRepository.findByName(HOST_NAME).orElseGet(() -> {
                 Host novoHost = new Host(null, HOST_NAME, HOST_IP, HOST_PORT, true);
@@ -79,12 +81,12 @@ public class DataLoader {
             roleRepository.save(user);
 
             if (!usuarioRepository.findByUsername(ADMIN_NAME).isPresent()) {
-                Usuario usuario = new Usuario(null, ADMIN_NAME, PASS, admin, host.getId());
+                Usuario usuario = new Usuario(null, ADMIN_NAME, APASS, admin, host.getId());
                 usuarioRepository.save(usuario);
                 System.out.println("Novo ADMIN criado.");
             }
-            if (!usuarioRepository.findByUsername(TESTE_NAME).isPresent()) {
-                Usuario usuario = new Usuario(null, TESTE_NAME, PASS, user, host.getId());
+            if (!usuarioRepository.findByUsername(USER_NAME).isPresent()) {
+                Usuario usuario = new Usuario(null, USER_NAME, UPASS, user, host.getId());
                 usuarioRepository.save(usuario);
                 System.out.println("Novo usuario criado.");
             }

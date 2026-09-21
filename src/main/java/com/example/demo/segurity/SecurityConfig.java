@@ -23,62 +23,63 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    
-    
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter){
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration) throws Exception {
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-        return configuration.getAuthenticationManager();
-    }//
+        @Bean
+        public AuthenticationManager authenticationManager(
+                        AuthenticationConfiguration configuration) throws Exception {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+                return configuration.getAuthenticationManager();
+        }//
 
-        return http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
-                .sessionManagement(session -> session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/error").permitAll()
-                        .anyRequest().authenticated())
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http)
+                        throws Exception {
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173"));
-        configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                return http
+                                .csrf(csrf -> csrf.disable())
+                                .cors(cors -> {
+                                })
+                                .sessionManagement(session -> session.sessionCreationPolicy(
+                                                SessionCreationPolicy.STATELESS))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/auth/**", "/error").permitAll()
+                                                .anyRequest().authenticated())
+                                .addFilterBefore(
+                                                jwtAuthenticationFilter,
+                                                UsernamePasswordAuthenticationFilter.class)
+                                .build();
+        }
 
-        configuration.setAllowedHeaders(
-                List.of("Authorization", "Content-Type"));
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(List.of(
+                                "http://localhost:3000",
+                                "http://10.211.25.199:3000"));
+                configuration.setAllowedMethods(
+                                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        configuration.setAllowCredentials(true);
+                configuration.setAllowedHeaders(
+                                List.of("Authorization", "Content-Type"));
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                configuration.setAllowCredentials(true);
 
-        source.registerCorsConfiguration(
-                "/**",
-                configuration);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        return source;
-    }
+                source.registerCorsConfiguration(
+                                "/**",
+                                configuration);
+
+                return source;
+        }
 }

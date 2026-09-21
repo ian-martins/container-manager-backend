@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -86,6 +87,15 @@ public class Usuario implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public List<String> response(){
+        List<String> response = new ArrayList<>();
+        response.add(id.toString());
+        response.add(username);
+        response.add(dockerHostId.toString());
+        response.add(role.getName());
+        return response;
     }
 
 }
