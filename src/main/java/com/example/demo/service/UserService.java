@@ -19,7 +19,6 @@ public class UserService {
     private final UsuarioRepository userRepository;
     private final HostRepository hostRepository;
     private final ConnectionService connectionService;
-
     private final SecurityConfig securityConfig;
 
     public UserService(HostRepository hostRepository, UsuarioRepository userRepository,ConnectionService connectionService,SecurityConfig securityConfig) {
@@ -29,6 +28,7 @@ public class UserService {
         this.securityConfig = securityConfig;
     }
 
+    
     public Usuario salvarUsuario(Usuario usuario, UsuarioRequestDTO usuarioDTO) {
 
         if (usuarioDTO.username() != null && !usuarioDTO.username().isBlank()) {
@@ -59,7 +59,6 @@ public class UserService {
                 dados.get(3)
             ));
         }
-
         return response;
     }
 
